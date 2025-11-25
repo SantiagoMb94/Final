@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Encuestas Empresariales</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">📊 Encuestas Empresariales</h1>
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link active">Inicio</a></li>
+                <li><a href="/empresas.html" class="nav-link">Empresas</a></li>
+                <li><a href="/usuarios.html" class="nav-link">Usuarios</a></li>
+                <li><a href="/encuestas.html" class="nav-link">Encuestas</a></li>
+                <li><a href="/reportes.html" class="nav-link">Reportes</a></li>
+                <li><a href="/responder.html" class="nav-link">Responder</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="dashboard">
+            <h2>Panel de Control</h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-icon">🏢</div>
+                    <h3>Empresas</h3>
+                    <p>Gestiona las empresas registradas en el sistema</p>
+                    <a href="/empresas.html" class="btn btn-primary">Gestionar</a>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-icon">👥</div>
+                    <h3>Usuarios</h3>
+                    <p>Administra los usuarios autorizados</p>
+                    <a href="/usuarios.html" class="btn btn-primary">Gestionar</a>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-icon">📝</div>
+                    <h3>Encuestas</h3>
+                    <p>Crea y administra encuestas</p>
+                    <a href="/encuestas.html" class="btn btn-primary">Gestionar</a>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-icon">📊</div>
+                    <h3>Reportes</h3>
+                    <p>Visualiza reportes y estadísticas</p>
+                    <a href="/reportes.html" class="btn btn-primary">Ver Reportes</a>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-icon">✍️</div>
+                    <h3>Responder Encuestas</h3>
+                    <p>Responde a las encuestas activas</p>
+                    <a href="/responder.html" class="btn btn-primary">Responder</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistema de Gestión de Encuestas Empresariales</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+</body>
+</html>
+

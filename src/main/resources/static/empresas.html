@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Empresas - Sistema de Encuestas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">📊 Encuestas Empresariales</h1>
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link">Inicio</a></li>
+                <li><a href="/empresas.html" class="nav-link active">Empresas</a></li>
+                <li><a href="/usuarios.html" class="nav-link">Usuarios</a></li>
+                <li><a href="/encuestas.html" class="nav-link">Encuestas</a></li>
+                <li><a href="/reportes.html" class="nav-link">Reportes</a></li>
+                <li><a href="/responder.html" class="nav-link">Responder</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Gestión de Empresas</h2>
+                <button class="btn btn-primary" onclick="abrirModalCrear()">+ Nueva Empresa</button>
+            </div>
+
+            <div id="empresasList"></div>
+        </div>
+    </main>
+
+    <!-- Modal Crear/Editar Empresa -->
+    <div id="modalEmpresa" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalEmpresaTitle">Nueva Empresa</h3>
+                <button class="close" onclick="cerrarModalEmpresa()">&times;</button>
+            </div>
+            <form id="formEmpresa" onsubmit="guardarEmpresa(event)">
+                <input type="hidden" id="empresaId">
+                
+                <div class="form-group">
+                    <label class="form-label" for="nombre">Nombre *</label>
+                    <input type="text" class="form-control" id="nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="nit">NIT</label>
+                    <input type="text" class="form-control" id="nit">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="direccion">Dirección</label>
+                    <input type="text" class="form-control" id="direccion">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="telefono">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" class="form-control" id="email">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="activa">Estado</label>
+                    <select class="form-select" id="activa">
+                        <option value="true">Activa</option>
+                        <option value="false">Inactiva</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalEmpresa()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistema de Gestión de Encuestas Empresariales</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/empresas.js"></script>
+</body>
+</html>
+

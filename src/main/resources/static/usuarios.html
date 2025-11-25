@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Sistema de Encuestas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">📊 Encuestas Empresariales</h1>
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link">Inicio</a></li>
+                <li><a href="/empresas.html" class="nav-link">Empresas</a></li>
+                <li><a href="/usuarios.html" class="nav-link active">Usuarios</a></li>
+                <li><a href="/encuestas.html" class="nav-link">Encuestas</a></li>
+                <li><a href="/reportes.html" class="nav-link">Reportes</a></li>
+                <li><a href="/responder.html" class="nav-link">Responder</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Gestión de Usuarios</h2>
+                <button class="btn btn-primary" onclick="abrirModalCrear()">+ Nuevo Usuario</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="filtroEmpresa">Filtrar por Empresa</label>
+                <select class="form-select" id="filtroEmpresa" onchange="cargarUsuarios()">
+                    <option value="">Todas las empresas</option>
+                </select>
+            </div>
+
+            <div id="usuariosList"></div>
+        </div>
+    </main>
+
+    <!-- Modal Crear/Editar Usuario -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalUsuarioTitle">Nuevo Usuario</h3>
+                <button class="close" onclick="cerrarModalUsuario()">&times;</button>
+            </div>
+            <form id="formUsuario" onsubmit="guardarUsuario(event)">
+                <input type="hidden" id="usuarioId">
+                
+                <div class="form-group">
+                    <label class="form-label" for="nombre">Nombre *</label>
+                    <input type="text" class="form-control" id="nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="apellido">Apellido *</label>
+                    <input type="text" class="form-control" id="apellido" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email *</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="contrasena">Contraseña *</label>
+                    <input type="password" class="form-control" id="contrasena" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="rol">Rol *</label>
+                    <select class="form-select" id="rol" required>
+                        <option value="USUARIO">Usuario</option>
+                        <option value="ADMINISTRADOR">Administrador</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="empresaId">Empresa *</label>
+                    <select class="form-select" id="empresaId" required>
+                        <option value="">Seleccione una empresa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="activo">Estado</label>
+                    <select class="form-select" id="activo">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalUsuario()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistema de Gestión de Encuestas Empresariales</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/usuarios.js"></script>
+</body>
+</html>
+

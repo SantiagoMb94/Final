@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Encuestas - Sistema de Encuestas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">📊 Encuestas Empresariales</h1>
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link">Inicio</a></li>
+                <li><a href="/empresas.html" class="nav-link">Empresas</a></li>
+                <li><a href="/usuarios.html" class="nav-link">Usuarios</a></li>
+                <li><a href="/encuestas.html" class="nav-link active">Encuestas</a></li>
+                <li><a href="/reportes.html" class="nav-link">Reportes</a></li>
+                <li><a href="/responder.html" class="nav-link">Responder</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Gestión de Encuestas</h2>
+                <button class="btn btn-primary" onclick="abrirModalCrear()">+ Nueva Encuesta</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="filtroEmpresaEncuesta">Filtrar por Empresa</label>
+                <select class="form-select" id="filtroEmpresaEncuesta" onchange="cargarEncuestas()">
+                    <option value="">Todas las empresas</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="filtroEstado">Filtrar por Estado</label>
+                <select class="form-select" id="filtroEstado" onchange="cargarEncuestas()">
+                    <option value="">Todos los estados</option>
+                    <option value="BORRADOR">Borrador</option>
+                    <option value="ACTIVA">Activa</option>
+                    <option value="FINALIZADA">Finalizada</option>
+                </select>
+            </div>
+
+            <div id="encuestasList"></div>
+        </div>
+    </main>
+
+    <!-- Modal Crear/Editar Encuesta -->
+    <div id="modalEncuesta" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalEncuestaTitle">Nueva Encuesta</h3>
+                <button class="close" onclick="cerrarModalEncuesta()">&times;</button>
+            </div>
+            <form id="formEncuesta" onsubmit="guardarEncuesta(event)">
+                <input type="hidden" id="encuestaId">
+                
+                <div class="form-group">
+                    <label class="form-label" for="titulo">Título *</label>
+                    <input type="text" class="form-control" id="titulo" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="descripcion">Descripción</label>
+                    <textarea class="form-control" id="descripcion" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="fechaInicio">Fecha de Inicio</label>
+                    <input type="datetime-local" class="form-control" id="fechaInicio">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="fechaFin">Fecha de Fin</label>
+                    <input type="datetime-local" class="form-control" id="fechaFin">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="estado">Estado</label>
+                    <select class="form-select" id="estado">
+                        <option value="BORRADOR">Borrador</option>
+                        <option value="ACTIVA">Activa</option>
+                        <option value="FINALIZADA">Finalizada</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="empresaIdEncuesta">Empresa *</label>
+                    <select class="form-select" id="empresaIdEncuesta" required>
+                        <option value="">Seleccione una empresa</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalEncuesta()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Gestionar Preguntas -->
+    <div id="modalPreguntas" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Gestionar Preguntas - <span id="encuestaTituloPreguntas"></span></h3>
+                <button class="close" onclick="cerrarModalPreguntas()">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <button class="btn btn-primary" onclick="abrirModalCrearPregunta()">+ Nueva Pregunta</button>
+            </div>
+
+            <div id="preguntasList"></div>
+        </div>
+    </div>
+
+    <!-- Modal Crear/Editar Pregunta -->
+    <div id="modalPregunta" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalPreguntaTitle">Nueva Pregunta</h3>
+                <button class="close" onclick="cerrarModalPregunta()">&times;</button>
+            </div>
+            <form id="formPregunta" onsubmit="guardarPregunta(event)">
+                <input type="hidden" id="preguntaId">
+                <input type="hidden" id="encuestaIdPregunta">
+                
+                <div class="form-group">
+                    <label class="form-label" for="textoPregunta">Texto de la Pregunta *</label>
+                    <textarea class="form-control" id="textoPregunta" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="tipoPregunta">Tipo *</label>
+                    <select class="form-select" id="tipoPregunta" required onchange="toggleOpciones()">
+                        <option value="OPCION_MULTIPLE">Opción Múltiple</option>
+                        <option value="TEXTO_LIBRE">Texto Libre</option>
+                        <option value="SI_NO">Sí/No</option>
+                        <option value="ESCALA">Escala</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="obligatoriaPregunta"> Pregunta obligatoria
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ordenPregunta">Orden</label>
+                    <input type="number" class="form-control" id="ordenPregunta" min="1">
+                </div>
+
+                <div id="opcionesContainer" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Opciones</label>
+                        <div id="opcionesList"></div>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="agregarOpcion()">+ Agregar Opción</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalPregunta()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistema de Gestión de Encuestas Empresariales</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/encuestas.js"></script>
+</body>
+</html>
+

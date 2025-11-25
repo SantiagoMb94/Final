@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Sistema de Encuestas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">📊 Encuestas Empresariales</h1>
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link">Inicio</a></li>
+                <li><a href="/empresas.html" class="nav-link">Empresas</a></li>
+                <li><a href="/usuarios.html" class="nav-link">Usuarios</a></li>
+                <li><a href="/encuestas.html" class="nav-link">Encuestas</a></li>
+                <li><a href="/reportes.html" class="nav-link active">Reportes</a></li>
+                <li><a href="/responder.html" class="nav-link">Responder</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Reportes y Estadísticas</h2>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="tipoReporte">Tipo de Reporte</label>
+                <select class="form-select" id="tipoReporte" onchange="cambiarTipoReporte()">
+                    <option value="encuesta">Reporte por Encuesta</option>
+                    <option value="empresa">Reporte por Empresa</option>
+                </select>
+            </div>
+
+            <div id="reporteEncuesta" style="display: block;">
+                <div class="form-group">
+                    <label class="form-label" for="selectEncuesta">Seleccionar Encuesta</label>
+                    <select class="form-select" id="selectEncuesta">
+                        <option value="">Seleccione una encuesta</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="generarReporteEncuesta()">Generar Reporte</button>
+            </div>
+
+            <div id="reporteEmpresa" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="selectEmpresaReporte">Seleccionar Empresa</label>
+                    <select class="form-select" id="selectEmpresaReporte">
+                        <option value="">Seleccione una empresa</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="generarReporteEmpresa()">Generar Reporte</button>
+            </div>
+
+            <div id="reporteResultado" style="margin-top: 2rem;"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistema de Gestión de Encuestas Empresariales</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/reportes.js"></script>
+</body>
+</html>
+
