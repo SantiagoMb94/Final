@@ -31,14 +31,14 @@ public class ReporteServicio {
         Long totalRespondentes = respuestaServicio.contarRespondentesPorEncuesta(encuestaId);
         
         Map<String, Object> reporte = new HashMap<>();
-        reporte.put("encuesta", Map.of(
-                "id", encuesta.getId(),
-                "titulo", encuesta.getTitulo(),
-                "descripcion", encuesta.getDescripcion(),
-                "estado", encuesta.getEstado(),
-                "fechaInicio", encuesta.getFechaInicio(),
-                "fechaFin", encuesta.getFechaFin()
-        ));
+        Map<String, Object> encuestaMap = new HashMap<>();
+        encuestaMap.put("id", encuesta.getId());
+        encuestaMap.put("titulo", encuesta.getTitulo());
+        encuestaMap.put("descripcion", encuesta.getDescripcion());
+        encuestaMap.put("estado", encuesta.getEstado());
+        encuestaMap.put("fechaInicio", encuesta.getFechaInicio());
+        encuestaMap.put("fechaFin", encuesta.getFechaFin());
+        reporte.put("encuesta", encuestaMap);
         reporte.put("totalRespondentes", totalRespondentes);
         
         List<Map<String, Object>> estadisticasPreguntas = preguntas.stream()
@@ -82,12 +82,12 @@ public class ReporteServicio {
         List<Map<String, Object>> resumenEncuestas = encuestas.stream()
                 .map(encuesta -> {
                     Long totalRespondentes = respuestaServicio.contarRespondentesPorEncuesta(encuesta.getId());
-                    return Map.of(
-                            "id", encuesta.getId(),
-                            "titulo", encuesta.getTitulo(),
-                            "estado", encuesta.getEstado(),
-                            "totalRespondentes", totalRespondentes
-                    );
+                    Map<String, Object> resumen = new HashMap<>();
+                    resumen.put("id", encuesta.getId());
+                    resumen.put("titulo", encuesta.getTitulo());
+                    resumen.put("estado", encuesta.getEstado());
+                    resumen.put("totalRespondentes", totalRespondentes);
+                    return resumen;
                 })
                 .collect(Collectors.toList());
         
