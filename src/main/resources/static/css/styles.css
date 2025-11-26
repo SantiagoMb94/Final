@@ -510,6 +510,12 @@ textarea.form-control {
     border: 1px solid #bfdbfe;
 }
 
+.alert-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
 /* Actions */
 .actions {
     display: flex;
