@@ -4,9 +4,20 @@
 -- Crear la base de datos (ejecutar manualmente si no existe)
 -- CREATE DATABASE encuestas_db;
 
+-- Habilitar extensión para UUIDs (si es necesario para versiones muy antiguas, en PG 13+ es nativo)
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Eliminar tablas existentes para garantizar la migración a UUID
+DROP TABLE IF EXISTS respuesta CASCADE;
+DROP TABLE IF EXISTS opcion CASCADE;
+DROP TABLE IF EXISTS pregunta CASCADE;
+DROP TABLE IF EXISTS encuesta CASCADE;
+DROP TABLE IF EXISTS usuario CASCADE;
+DROP TABLE IF EXISTS empresa CASCADE;
+
 -- Tabla: empresa
 CREATE TABLE IF NOT EXISTS empresa (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nombre VARCHAR(255) NOT NULL UNIQUE,
     nit VARCHAR(100) UNIQUE,
     direccion VARCHAR(255),
@@ -19,14 +30,14 @@ CREATE TABLE IF NOT EXISTS empresa (
 
 -- Tabla: usuario
 CREATE TABLE IF NOT EXISTS usuario (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     contrasena VARCHAR(255) NOT NULL,
     rol VARCHAR(20) NOT NULL DEFAULT 'USUARIO',
     activo BOOLEAN NOT NULL DEFAULT TRUE,
-    empresa_id BIGINT NOT NULL,
+    empresa_id UUID NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_usuario_empresa FOREIGN KEY (empresa_id) REFERENCES empresa(id) ON DELETE CASCADE
@@ -34,13 +45,13 @@ CREATE TABLE IF NOT EXISTS usuario (
 
 -- Tabla: encuesta
 CREATE TABLE IF NOT EXISTS encuesta (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     titulo VARCHAR(255) NOT NULL,
     descripcion VARCHAR(1000),
     fecha_inicio TIMESTAMP NOT NULL,
     fecha_fin TIMESTAMP,
     estado VARCHAR(20) NOT NULL DEFAULT 'BORRADOR',
-    empresa_id BIGINT NOT NULL,
+    empresa_id UUID NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_encuesta_empresa FOREIGN KEY (empresa_id) REFERENCES empresa(id) ON DELETE CASCADE
@@ -48,12 +59,12 @@ CREATE TABLE IF NOT EXISTS encuesta (
 
 -- Tabla: pregunta
 CREATE TABLE IF NOT EXISTS pregunta (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     texto VARCHAR(500) NOT NULL,
     tipo VARCHAR(20) NOT NULL,
     obligatoria BOOLEAN NOT NULL DEFAULT FALSE,
     orden INTEGER,
-    encuesta_id BIGINT NOT NULL,
+    encuesta_id UUID NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_pregunta_encuesta FOREIGN KEY (encuesta_id) REFERENCES encuesta(id) ON DELETE CASCADE
@@ -61,10 +72,10 @@ CREATE TABLE IF NOT EXISTS pregunta (
 
 -- Tabla: opcion
 CREATE TABLE IF NOT EXISTS opcion (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     texto VARCHAR(255) NOT NULL,
     orden INTEGER,
-    pregunta_id BIGINT NOT NULL,
+    pregunta_id UUID NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_opcion_pregunta FOREIGN KEY (pregunta_id) REFERENCES pregunta(id) ON DELETE CASCADE
@@ -72,13 +83,13 @@ CREATE TABLE IF NOT EXISTS opcion (
 
 -- Tabla: respuesta
 CREATE TABLE IF NOT EXISTS respuesta (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     valor VARCHAR(1000),
     fecha_respuesta TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     identificador_respondente VARCHAR(100),
-    encuesta_id BIGINT NOT NULL,
-    pregunta_id BIGINT NOT NULL,
-    opcion_id BIGINT,
+    encuesta_id UUID NOT NULL,
+    pregunta_id UUID NOT NULL,
+    opcion_id UUID,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_respuesta_encuesta FOREIGN KEY (encuesta_id) REFERENCES encuesta(id) ON DELETE CASCADE,
@@ -96,4 +107,3 @@ CREATE INDEX IF NOT EXISTS idx_opcion_pregunta ON opcion(pregunta_id);
 CREATE INDEX IF NOT EXISTS idx_respuesta_encuesta ON respuesta(encuesta_id);
 CREATE INDEX IF NOT EXISTS idx_respuesta_pregunta ON respuesta(pregunta_id);
 CREATE INDEX IF NOT EXISTS idx_respuesta_respondente ON respuesta(identificador_respondente);
-

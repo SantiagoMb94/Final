@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/encuestas")
 @RequiredArgsConstructor
 public class EncuestaControlador {
-    
+
     private final EncuestaServicio encuestaServicio;
-    
+
     @GetMapping
     public ResponseEntity<List<EncuestaDTO>> listarTodas(
-            @RequestParam(required = false) Long empresaId,
+            @RequestParam(required = false) java.util.UUID empresaId,
             @RequestParam(required = false) String estado) {
         List<Encuesta> encuestas;
         if (empresaId != null && estado != null) {
@@ -31,57 +31,58 @@ public class EncuestaControlador {
         } else {
             encuestas = encuestaServicio.listarTodas();
         }
-        
+
         List<EncuestaDTO> encuestasDTO = encuestas.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
-        
+
         return ResponseEntity.ok(encuestasDTO);
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<EncuestaDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<EncuestaDTO> buscarPorId(@PathVariable java.util.UUID id) {
         return encuestaServicio.buscarPorId(id)
                 .map(encuesta -> ResponseEntity.ok(convertirADTO(encuesta)))
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @PostMapping
     public ResponseEntity<EncuestaDTO> crear(@Valid @RequestBody EncuestaDTO encuestaDTO) {
         if (encuestaDTO.getEmpresaId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        
+
         Encuesta encuesta = convertirAEntidad(encuestaDTO);
         Encuesta encuestaCreada = encuestaServicio.crear(encuesta, encuestaDTO.getEmpresaId());
         return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(encuestaCreada));
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<EncuestaDTO> actualizar(@PathVariable Long id, @Valid @RequestBody EncuestaDTO encuestaDTO) {
+    public ResponseEntity<EncuestaDTO> actualizar(@PathVariable java.util.UUID id,
+            @Valid @RequestBody EncuestaDTO encuestaDTO) {
         Encuesta encuesta = convertirAEntidad(encuestaDTO);
         Encuesta encuestaActualizada = encuestaServicio.actualizar(id, encuesta);
         return ResponseEntity.ok(convertirADTO(encuestaActualizada));
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable java.util.UUID id) {
         encuestaServicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @PutMapping("/{id}/activar")
-    public ResponseEntity<EncuestaDTO> activar(@PathVariable Long id) {
+    public ResponseEntity<EncuestaDTO> activar(@PathVariable java.util.UUID id) {
         Encuesta encuesta = encuestaServicio.activar(id);
         return ResponseEntity.ok(convertirADTO(encuesta));
     }
-    
+
     @PutMapping("/{id}/finalizar")
-    public ResponseEntity<EncuestaDTO> finalizar(@PathVariable Long id) {
+    public ResponseEntity<EncuestaDTO> finalizar(@PathVariable java.util.UUID id) {
         Encuesta encuesta = encuestaServicio.finalizar(id);
         return ResponseEntity.ok(convertirADTO(encuesta));
     }
-    
+
     private EncuestaDTO convertirADTO(Encuesta encuesta) {
         EncuestaDTO dto = new EncuestaDTO();
         dto.setId(encuesta.getId());
@@ -93,7 +94,7 @@ public class EncuestaControlador {
         dto.setEmpresaId(encuesta.getEmpresa() != null ? encuesta.getEmpresa().getId() : null);
         return dto;
     }
-    
+
     private Encuesta convertirAEntidad(EncuestaDTO dto) {
         Encuesta encuesta = new Encuesta();
         encuesta.setTitulo(dto.getTitulo());
@@ -104,4 +105,3 @@ public class EncuestaControlador {
         return encuesta;
     }
 }
-

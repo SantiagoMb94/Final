@@ -11,19 +11,18 @@ import java.util.Map;
 @RequestMapping("/api/reportes")
 @RequiredArgsConstructor
 public class ReporteControlador {
-    
+
     private final ReporteServicio reporteServicio;
-    
+
     @GetMapping("/encuestas/{encuestaId}")
-    public ResponseEntity<Map<String, Object>> generarReporteBasico(@PathVariable Long encuestaId) {
+    public ResponseEntity<Map<String, Object>> generarReporteBasico(@PathVariable java.util.UUID encuestaId) {
         Map<String, Object> reporte = reporteServicio.generarReporteBasico(encuestaId);
         return ResponseEntity.ok(reporte);
     }
-    
+
     @GetMapping("/empresas/{empresaId}")
-    public ResponseEntity<Map<String, Object>> generarReportePorEmpresa(@PathVariable Long empresaId) {
+    public ResponseEntity<Map<String, Object>> generarReportePorEmpresa(@PathVariable java.util.UUID empresaId) {
         Map<String, Object> reporte = reporteServicio.generarReportePorEmpresa(empresaId);
         return ResponseEntity.ok(reporte);
     }
 }
-

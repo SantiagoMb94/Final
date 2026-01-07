@@ -9,18 +9,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RespuestaRepositorio extends JpaRepository<Respuesta, Long> {
-    
-    List<Respuesta> findByEncuestaId(Long encuestaId);
-    
-    List<Respuesta> findByPreguntaId(Long preguntaId);
-    
-    List<Respuesta> findByEncuestaIdAndIdentificadorRespondente(Long encuestaId, String identificadorRespondente);
-    
-    @Query("SELECT COUNT(DISTINCT r.identificadorRespondente) FROM Respuesta r WHERE r.encuesta.id = :encuestaId")
-    Long countDistinctRespondentesByEncuestaId(@Param("encuestaId") Long encuestaId);
-    
-    @Query("SELECT COUNT(r) FROM Respuesta r WHERE r.pregunta.id = :preguntaId")
-    Long countByPreguntaId(@Param("preguntaId") Long preguntaId);
-}
+public interface RespuestaRepositorio extends JpaRepository<Respuesta, java.util.UUID> {
 
+    List<Respuesta> findByEncuestaId(java.util.UUID encuestaId);
+
+    List<Respuesta> findByPreguntaId(java.util.UUID preguntaId);
+
+    List<Respuesta> findByEncuestaIdAndIdentificadorRespondente(java.util.UUID encuestaId,
+            String identificadorRespondente);
+
+    @Query("SELECT COUNT(DISTINCT r.identificadorRespondente) FROM Respuesta r WHERE r.encuesta.id = :encuestaId")
+    Long countDistinctRespondentesByEncuestaId(@Param("encuestaId") java.util.UUID encuestaId);
+
+    @Query("SELECT COUNT(r) FROM Respuesta r WHERE r.pregunta.id = :preguntaId")
+    Long countByPreguntaId(@Param("preguntaId") java.util.UUID preguntaId);
+}

@@ -14,33 +14,33 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PreguntaServicio {
-    
+
     private final PreguntaRepositorio preguntaRepositorio;
     private final EncuestaRepositorio encuestaRepositorio;
-    
+
     public List<Pregunta> listarTodas() {
         return preguntaRepositorio.findAll();
     }
-    
-    public List<Pregunta> listarPorEncuesta(Long encuestaId) {
+
+    public List<Pregunta> listarPorEncuesta(java.util.UUID encuestaId) {
         return preguntaRepositorio.findByEncuestaIdOrderByOrdenAsc(encuestaId);
     }
-    
-    public Optional<Pregunta> buscarPorId(Long id) {
+
+    public Optional<Pregunta> buscarPorId(java.util.UUID id) {
         return preguntaRepositorio.findById(id);
     }
-    
+
     @Transactional
-    public Pregunta crear(Pregunta pregunta, Long encuestaId) {
+    public Pregunta crear(Pregunta pregunta, java.util.UUID encuestaId) {
         Encuesta encuesta = encuestaRepositorio.findById(encuestaId)
                 .orElseThrow(() -> new RuntimeException("Encuesta no encontrada con id: " + encuestaId));
-        
+
         pregunta.setEncuesta(encuesta);
         return preguntaRepositorio.save(pregunta);
     }
-    
+
     @Transactional
-    public Pregunta actualizar(Long id, Pregunta preguntaActualizada) {
+    public Pregunta actualizar(java.util.UUID id, Pregunta preguntaActualizada) {
         return preguntaRepositorio.findById(id)
                 .map(pregunta -> {
                     pregunta.setTexto(preguntaActualizada.getTexto());
@@ -51,10 +51,9 @@ public class PreguntaServicio {
                 })
                 .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + id));
     }
-    
+
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(java.util.UUID id) {
         preguntaRepositorio.deleteById(id);
     }
 }
-

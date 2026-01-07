@@ -14,45 +14,45 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UsuarioServicio {
-    
+
     private final UsuarioRepositorio usuarioRepositorio;
     private final EmpresaRepositorio empresaRepositorio;
-    
+
     public List<Usuario> listarTodos() {
         return usuarioRepositorio.findAll();
     }
-    
-    public List<Usuario> listarPorEmpresa(Long empresaId) {
+
+    public List<Usuario> listarPorEmpresa(java.util.UUID empresaId) {
         return usuarioRepositorio.findByEmpresaId(empresaId);
     }
-    
-    public List<Usuario> listarActivosPorEmpresa(Long empresaId) {
+
+    public List<Usuario> listarActivosPorEmpresa(java.util.UUID empresaId) {
         return usuarioRepositorio.findByEmpresaIdAndActivoTrue(empresaId);
     }
-    
-    public Optional<Usuario> buscarPorId(Long id) {
+
+    public Optional<Usuario> buscarPorId(java.util.UUID id) {
         return usuarioRepositorio.findById(id);
     }
-    
+
     public Optional<Usuario> buscarPorEmail(String email) {
         return usuarioRepositorio.findByEmail(email);
     }
-    
+
     @Transactional
-    public Usuario crear(Usuario usuario, Long empresaId) {
+    public Usuario crear(Usuario usuario, java.util.UUID empresaId) {
         Empresa empresa = empresaRepositorio.findById(empresaId)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con id: " + empresaId));
-        
+
         if (usuarioRepositorio.existsByEmail(usuario.getEmail())) {
             throw new RuntimeException("Ya existe un usuario con el email: " + usuario.getEmail());
         }
-        
+
         usuario.setEmpresa(empresa);
         return usuarioRepositorio.save(usuario);
     }
-    
+
     @Transactional
-    public Usuario actualizar(Long id, Usuario usuarioActualizado) {
+    public Usuario actualizar(java.util.UUID id, Usuario usuarioActualizado) {
         return usuarioRepositorio.findById(id)
                 .map(usuario -> {
                     usuario.setNombre(usuarioActualizado.getNombre());
@@ -67,14 +67,14 @@ public class UsuarioServicio {
                 })
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
     }
-    
+
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(java.util.UUID id) {
         usuarioRepositorio.deleteById(id);
     }
-    
+
     @Transactional
-    public void desactivar(Long id) {
+    public void desactivar(java.util.UUID id) {
         usuarioRepositorio.findById(id)
                 .ifPresent(usuario -> {
                     usuario.setActivo(false);
@@ -82,4 +82,3 @@ public class UsuarioServicio {
                 });
     }
 }
-

@@ -13,7 +13,7 @@ async function cargarEmpresas() {
         empresas = await api.get('/empresas?activas=true');
         const selectEmpresa = document.getElementById('empresaId');
         const filtroEmpresa = document.getElementById('filtroEmpresa');
-        
+
         empresas.forEach(empresa => {
             const option = document.createElement('option');
             option.value = empresa.id;
@@ -55,7 +55,7 @@ function mostrarUsuarios() {
     }
 
     let html = '<div class="table-container"><table class="table"><thead><tr>';
-    html += '<th>ID</th>';
+    html += '<th>#</th>';
     html += '<th>Nombre</th>';
     html += '<th>Email</th>';
     html += '<th>Rol</th>';
@@ -64,17 +64,17 @@ function mostrarUsuarios() {
     html += '<th>Acciones</th>';
     html += '</tr></thead><tbody>';
 
-    usuarios.forEach(usuario => {
-        const estadoBadge = usuario.activo 
+    usuarios.forEach((usuario, index) => {
+        const estadoBadge = usuario.activo
             ? '<span class="badge badge-success">Activo</span>'
             : '<span class="badge badge-danger">Inactivo</span>';
-        
+
         const rolBadge = usuario.rol === 'ADMINISTRADOR'
             ? '<span class="badge badge-info">Administrador</span>'
             : '<span class="badge badge-info">Usuario</span>';
 
         html += `<tr>
-            <td>${usuario.id}</td>
+            <td>${index + 1}</td>
             <td>${usuario.nombre} ${usuario.apellido}</td>
             <td>${usuario.email}</td>
             <td>${rolBadge}</td>
@@ -82,8 +82,8 @@ function mostrarUsuarios() {
             <td>${estadoBadge}</td>
             <td>
                 <div class="actions">
-                    <button class="btn btn-sm btn-primary" onclick="editarUsuario(${usuario.id})">Editar</button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${usuario.id})">Eliminar</button>
+                    <button class="btn btn-sm btn-primary" onclick="editarUsuario('${usuario.id}')">Editar</button>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('${usuario.id}')">Eliminar</button>
                 </div>
             </td>
         </tr>`;
@@ -120,7 +120,7 @@ function editarUsuario(id) {
     document.getElementById('empresaId').value = usuario.empresaId || '';
     document.getElementById('activo').value = usuario.activo ? 'true' : 'false';
     document.getElementById('contrasena').required = false;
-    
+
     ui.showModal('modalUsuario');
 }
 
@@ -140,7 +140,7 @@ async function guardarUsuario(event) {
         email: document.getElementById('email').value,
         contrasena: document.getElementById('contrasena').value,
         rol: document.getElementById('rol').value,
-        empresaId: parseInt(document.getElementById('empresaId').value),
+        empresaId: document.getElementById('empresaId').value,
         activo: document.getElementById('activo').value === 'true'
     };
 
@@ -156,7 +156,7 @@ async function guardarUsuario(event) {
             await api.post('/usuarios', usuarioData);
             ui.showAlert('Usuario creado exitosamente', 'success');
         }
-        
+
         cerrarModalUsuario();
         cargarUsuarios();
     } catch (error) {

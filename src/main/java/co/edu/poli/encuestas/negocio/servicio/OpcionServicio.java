@@ -14,33 +14,33 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class OpcionServicio {
-    
+
     private final OpcionRepositorio opcionRepositorio;
     private final PreguntaRepositorio preguntaRepositorio;
-    
+
     public List<Opcion> listarTodas() {
         return opcionRepositorio.findAll();
     }
-    
-    public List<Opcion> listarPorPregunta(Long preguntaId) {
+
+    public List<Opcion> listarPorPregunta(java.util.UUID preguntaId) {
         return opcionRepositorio.findByPreguntaIdOrderByOrdenAsc(preguntaId);
     }
-    
-    public Optional<Opcion> buscarPorId(Long id) {
+
+    public Optional<Opcion> buscarPorId(java.util.UUID id) {
         return opcionRepositorio.findById(id);
     }
-    
+
     @Transactional
-    public Opcion crear(Opcion opcion, Long preguntaId) {
+    public Opcion crear(Opcion opcion, java.util.UUID preguntaId) {
         Pregunta pregunta = preguntaRepositorio.findById(preguntaId)
                 .orElseThrow(() -> new RuntimeException("Pregunta no encontrada con id: " + preguntaId));
-        
+
         opcion.setPregunta(pregunta);
         return opcionRepositorio.save(opcion);
     }
-    
+
     @Transactional
-    public Opcion actualizar(Long id, Opcion opcionActualizada) {
+    public Opcion actualizar(java.util.UUID id, Opcion opcionActualizada) {
         return opcionRepositorio.findById(id)
                 .map(opcion -> {
                     opcion.setTexto(opcionActualizada.getTexto());
@@ -49,10 +49,9 @@ public class OpcionServicio {
                 })
                 .orElseThrow(() -> new RuntimeException("Opción no encontrada con id: " + id));
     }
-    
+
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(java.util.UUID id) {
         opcionRepositorio.deleteById(id);
     }
 }
-

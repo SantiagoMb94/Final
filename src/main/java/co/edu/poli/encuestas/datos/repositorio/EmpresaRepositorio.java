@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface EmpresaRepositorio extends JpaRepository<Empresa, Long> {
-    
+public interface EmpresaRepositorio extends JpaRepository<Empresa, java.util.UUID> {
+
     Optional<Empresa> findByNit(String nit);
-    
+
     Optional<Empresa> findByNombre(String nombre);
-    
+
     List<Empresa> findByActivaTrue();
 }
-

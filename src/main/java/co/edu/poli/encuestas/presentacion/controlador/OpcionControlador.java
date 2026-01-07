@@ -16,56 +16,57 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/opciones")
 @RequiredArgsConstructor
 public class OpcionControlador {
-    
+
     private final OpcionServicio opcionServicio;
-    
+
     @GetMapping
-    public ResponseEntity<List<OpcionDTO>> listarTodas(@RequestParam(required = false) Long preguntaId) {
+    public ResponseEntity<List<OpcionDTO>> listarTodas(@RequestParam(required = false) java.util.UUID preguntaId) {
         List<Opcion> opciones;
         if (preguntaId != null) {
             opciones = opcionServicio.listarPorPregunta(preguntaId);
         } else {
             opciones = opcionServicio.listarTodas();
         }
-        
+
         List<OpcionDTO> opcionesDTO = opciones.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
-        
+
         return ResponseEntity.ok(opcionesDTO);
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<OpcionDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<OpcionDTO> buscarPorId(@PathVariable java.util.UUID id) {
         return opcionServicio.buscarPorId(id)
                 .map(opcion -> ResponseEntity.ok(convertirADTO(opcion)))
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @PostMapping
     public ResponseEntity<OpcionDTO> crear(@Valid @RequestBody OpcionDTO opcionDTO) {
         if (opcionDTO.getPreguntaId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        
+
         Opcion opcion = convertirAEntidad(opcionDTO);
         Opcion opcionCreada = opcionServicio.crear(opcion, opcionDTO.getPreguntaId());
         return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(opcionCreada));
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<OpcionDTO> actualizar(@PathVariable Long id, @Valid @RequestBody OpcionDTO opcionDTO) {
+    public ResponseEntity<OpcionDTO> actualizar(@PathVariable java.util.UUID id,
+            @Valid @RequestBody OpcionDTO opcionDTO) {
         Opcion opcion = convertirAEntidad(opcionDTO);
         Opcion opcionActualizada = opcionServicio.actualizar(id, opcion);
         return ResponseEntity.ok(convertirADTO(opcionActualizada));
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable java.util.UUID id) {
         opcionServicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     private OpcionDTO convertirADTO(Opcion opcion) {
         OpcionDTO dto = new OpcionDTO();
         dto.setId(opcion.getId());
@@ -74,7 +75,7 @@ public class OpcionControlador {
         dto.setPreguntaId(opcion.getPregunta() != null ? opcion.getPregunta().getId() : null);
         return dto;
     }
-    
+
     private Opcion convertirAEntidad(OpcionDTO dto) {
         Opcion opcion = new Opcion();
         opcion.setTexto(dto.getTexto());
@@ -82,4 +83,3 @@ public class OpcionControlador {
         return opcion;
     }
 }
-

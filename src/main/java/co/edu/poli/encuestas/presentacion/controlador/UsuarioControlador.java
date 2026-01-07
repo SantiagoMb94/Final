@@ -16,62 +16,63 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
 public class UsuarioControlador {
-    
+
     private final UsuarioServicio usuarioServicio;
-    
+
     @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> listarTodos(@RequestParam(required = false) Long empresaId) {
+    public ResponseEntity<List<UsuarioDTO>> listarTodos(@RequestParam(required = false) java.util.UUID empresaId) {
         List<Usuario> usuarios;
         if (empresaId != null) {
             usuarios = usuarioServicio.listarPorEmpresa(empresaId);
         } else {
             usuarios = usuarioServicio.listarTodos();
         }
-        
+
         List<UsuarioDTO> usuariosDTO = usuarios.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
-        
+
         return ResponseEntity.ok(usuariosDTO);
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDTO> buscarPorId(@PathVariable java.util.UUID id) {
         return usuarioServicio.buscarPorId(id)
                 .map(usuario -> ResponseEntity.ok(convertirADTO(usuario)))
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @PostMapping
     public ResponseEntity<UsuarioDTO> crear(@Valid @RequestBody UsuarioDTO usuarioDTO) {
         if (usuarioDTO.getEmpresaId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        
+
         Usuario usuario = convertirAEntidad(usuarioDTO);
         Usuario usuarioCreado = usuarioServicio.crear(usuario, usuarioDTO.getEmpresaId());
         return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(usuarioCreado));
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> actualizar(@PathVariable java.util.UUID id,
+            @Valid @RequestBody UsuarioDTO usuarioDTO) {
         Usuario usuario = convertirAEntidad(usuarioDTO);
         Usuario usuarioActualizado = usuarioServicio.actualizar(id, usuario);
         return ResponseEntity.ok(convertirADTO(usuarioActualizado));
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable java.util.UUID id) {
         usuarioServicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @PutMapping("/{id}/desactivar")
-    public ResponseEntity<Void> desactivar(@PathVariable Long id) {
+    public ResponseEntity<Void> desactivar(@PathVariable java.util.UUID id) {
         usuarioServicio.desactivar(id);
         return ResponseEntity.ok().build();
     }
-    
+
     private UsuarioDTO convertirADTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
@@ -83,7 +84,7 @@ public class UsuarioControlador {
         dto.setEmpresaId(usuario.getEmpresa() != null ? usuario.getEmpresa().getId() : null);
         return dto;
     }
-    
+
     private Usuario convertirAEntidad(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.getNombre());
@@ -97,4 +98,3 @@ public class UsuarioControlador {
         return usuario;
     }
 }
-

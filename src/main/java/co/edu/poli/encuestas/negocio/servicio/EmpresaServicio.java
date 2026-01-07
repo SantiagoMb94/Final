@@ -12,32 +12,32 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EmpresaServicio {
-    
+
     private final EmpresaRepositorio empresaRepositorio;
-    
+
     public List<Empresa> listarTodas() {
         return empresaRepositorio.findAll();
     }
-    
+
     public List<Empresa> listarActivas() {
         return empresaRepositorio.findByActivaTrue();
     }
-    
-    public Optional<Empresa> buscarPorId(Long id) {
+
+    public Optional<Empresa> buscarPorId(java.util.UUID id) {
         return empresaRepositorio.findById(id);
     }
-    
+
     public Optional<Empresa> buscarPorNit(String nit) {
         return empresaRepositorio.findByNit(nit);
     }
-    
+
     @Transactional
     public Empresa crear(Empresa empresa) {
         return empresaRepositorio.save(empresa);
     }
-    
+
     @Transactional
-    public Empresa actualizar(Long id, Empresa empresaActualizada) {
+    public Empresa actualizar(java.util.UUID id, Empresa empresaActualizada) {
         return empresaRepositorio.findById(id)
                 .map(empresa -> {
                     empresa.setNombre(empresaActualizada.getNombre());
@@ -50,14 +50,14 @@ public class EmpresaServicio {
                 })
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con id: " + id));
     }
-    
+
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(java.util.UUID id) {
         empresaRepositorio.deleteById(id);
     }
-    
+
     @Transactional
-    public void desactivar(Long id) {
+    public void desactivar(java.util.UUID id) {
         empresaRepositorio.findById(id)
                 .ifPresent(empresa -> {
                     empresa.setActiva(false);
@@ -65,4 +65,3 @@ public class EmpresaServicio {
                 });
     }
 }
-

@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/respuestas")
 @RequiredArgsConstructor
 public class RespuestaControlador {
-    
+
     private final RespuestaServicio respuestaServicio;
-    
+
     @GetMapping
     public ResponseEntity<List<RespuestaDTO>> listarTodas(
-            @RequestParam(required = false) Long encuestaId,
-            @RequestParam(required = false) Long preguntaId,
+            @RequestParam(required = false) java.util.UUID encuestaId,
+            @RequestParam(required = false) java.util.UUID preguntaId,
             @RequestParam(required = false) String identificadorRespondente) {
         List<Respuesta> respuestas;
         if (encuestaId != null && identificadorRespondente != null) {
@@ -34,50 +34,50 @@ public class RespuestaControlador {
         } else {
             respuestas = respuestaServicio.listarTodas();
         }
-        
+
         List<RespuestaDTO> respuestasDTO = respuestas.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
-        
+
         return ResponseEntity.ok(respuestasDTO);
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<RespuestaDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<RespuestaDTO> buscarPorId(@PathVariable java.util.UUID id) {
         return respuestaServicio.buscarPorId(id)
                 .map(respuesta -> ResponseEntity.ok(convertirADTO(respuesta)))
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @PostMapping
     public ResponseEntity<RespuestaDTO> crear(@Valid @RequestBody RespuestaDTO respuestaDTO) {
         if (respuestaDTO.getEncuestaId() == null || respuestaDTO.getPreguntaId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        
+
         Respuesta respuesta = convertirAEntidad(respuestaDTO);
         Respuesta respuestaCreada = respuestaServicio.crear(
                 respuesta,
                 respuestaDTO.getEncuestaId(),
                 respuestaDTO.getPreguntaId(),
-                respuestaDTO.getOpcionId()
-        );
+                respuestaDTO.getOpcionId());
         return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(respuestaCreada));
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<RespuestaDTO> actualizar(@PathVariable Long id, @Valid @RequestBody RespuestaDTO respuestaDTO) {
+    public ResponseEntity<RespuestaDTO> actualizar(@PathVariable java.util.UUID id,
+            @Valid @RequestBody RespuestaDTO respuestaDTO) {
         Respuesta respuesta = convertirAEntidad(respuestaDTO);
         Respuesta respuestaActualizada = respuestaServicio.actualizar(id, respuesta);
         return ResponseEntity.ok(convertirADTO(respuestaActualizada));
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable java.util.UUID id) {
         respuestaServicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     private RespuestaDTO convertirADTO(Respuesta respuesta) {
         RespuestaDTO dto = new RespuestaDTO();
         dto.setId(respuesta.getId());
@@ -89,7 +89,7 @@ public class RespuestaControlador {
         dto.setOpcionId(respuesta.getOpcion() != null ? respuesta.getOpcion().getId() : null);
         return dto;
     }
-    
+
     private Respuesta convertirAEntidad(RespuestaDTO dto) {
         Respuesta respuesta = new Respuesta();
         respuesta.setValor(dto.getValor());
@@ -97,4 +97,3 @@ public class RespuestaControlador {
         return respuesta;
     }
 }
-

@@ -33,7 +33,7 @@ function mostrarEmpresas() {
     }
 
     let html = '<div class="table-container"><table class="table"><thead><tr>';
-    html += '<th>ID</th>';
+    html += '<th>#</th>';
     html += '<th>Nombre</th>';
     html += '<th>NIT</th>';
     html += '<th>Email</th>';
@@ -42,13 +42,13 @@ function mostrarEmpresas() {
     html += '<th>Acciones</th>';
     html += '</tr></thead><tbody>';
 
-    empresas.forEach(empresa => {
-        const estadoBadge = empresa.activa 
+    empresas.forEach((empresa, index) => {
+        const estadoBadge = empresa.activa
             ? '<span class="badge badge-success">Activa</span>'
             : '<span class="badge badge-danger">Inactiva</span>';
 
         html += `<tr>
-            <td>${empresa.id}</td>
+            <td>${index + 1}</td>
             <td>${empresa.nombre}</td>
             <td>${empresa.nit || '-'}</td>
             <td>${empresa.email || '-'}</td>
@@ -56,8 +56,8 @@ function mostrarEmpresas() {
             <td>${estadoBadge}</td>
             <td>
                 <div class="actions">
-                    <button class="btn btn-sm btn-primary" onclick="editarEmpresa(${empresa.id})">Editar</button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminarEmpresa(${empresa.id})">Eliminar</button>
+                    <button class="btn btn-sm btn-primary" onclick="editarEmpresa('${empresa.id}')">Editar</button>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarEmpresa('${empresa.id}')">Eliminar</button>
                 </div>
             </td>
         </tr>`;
@@ -87,7 +87,7 @@ function editarEmpresa(id) {
     document.getElementById('telefono').value = empresa.telefono || '';
     document.getElementById('email').value = empresa.email || '';
     document.getElementById('activa').value = empresa.activa ? 'true' : 'false';
-    
+
     ui.showModal('modalEmpresa');
 }
 
@@ -117,7 +117,7 @@ async function guardarEmpresa(event) {
             await api.post('/empresas', empresaData);
             ui.showAlert('Empresa creada exitosamente', 'success');
         }
-        
+
         cerrarModalEmpresa();
         cargarEmpresas();
     } catch (error) {

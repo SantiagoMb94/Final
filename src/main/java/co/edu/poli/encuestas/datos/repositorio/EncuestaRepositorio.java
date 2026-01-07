@@ -7,10 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EncuestaRepositorio extends JpaRepository<Encuesta, Long> {
-    
-    List<Encuesta> findByEmpresaId(Long empresaId);
-    
-    List<Encuesta> findByEmpresaIdAndEstado(Long empresaId, String estado);
-}
+public interface EncuestaRepositorio extends JpaRepository<Encuesta, java.util.UUID> {
 
+    List<Encuesta> findByEmpresaId(java.util.UUID empresaId);
+
+    List<Encuesta> findByEmpresaIdAndEstado(java.util.UUID empresaId, String estado);
+}

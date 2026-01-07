@@ -18,7 +18,7 @@ async function cargarEmpresas() {
         empresas = await api.get('/empresas?activas=true');
         const selectEmpresa = document.getElementById('empresaIdEncuesta');
         const filtroEmpresa = document.getElementById('filtroEmpresaEncuesta');
-        
+
         empresas.forEach(empresa => {
             const option = document.createElement('option');
             option.value = empresa.id;
@@ -43,7 +43,7 @@ async function cargarEncuestas() {
         if (empresaId) params.push(`empresaId=${empresaId}`);
         if (estado) params.push(`estado=${estado}`);
         if (params.length > 0) url += '?' + params.join('&');
-        
+
         encuestas = await api.get(url);
         mostrarEncuestas();
     } catch (error) {
@@ -66,7 +66,7 @@ function mostrarEncuestas() {
     }
 
     let html = '<div class="table-container"><table class="table"><thead><tr>';
-    html += '<th>ID</th>';
+    html += '<th>#</th>';
     html += '<th>Título</th>';
     html += '<th>Empresa</th>';
     html += '<th>Estado</th>';
@@ -75,15 +75,15 @@ function mostrarEncuestas() {
     html += '<th>Acciones</th>';
     html += '</tr></thead><tbody>';
 
-    encuestas.forEach(encuesta => {
-        const estadoBadge = encuesta.estado === 'ACTIVA' 
+    encuestas.forEach((encuesta, index) => {
+        const estadoBadge = encuesta.estado === 'ACTIVA'
             ? '<span class="badge badge-success">Activa</span>'
             : encuesta.estado === 'FINALIZADA'
-            ? '<span class="badge badge-warning">Finalizada</span>'
-            : '<span class="badge badge-info">Borrador</span>';
+                ? '<span class="badge badge-warning">Finalizada</span>'
+                : '<span class="badge badge-info">Borrador</span>';
 
         html += `<tr>
-            <td>${encuesta.id}</td>
+            <td>${index + 1}</td>
             <td>${encuesta.titulo}</td>
             <td>${obtenerNombreEmpresa(encuesta.empresaId)}</td>
             <td>${estadoBadge}</td>
@@ -91,11 +91,11 @@ function mostrarEncuestas() {
             <td>${ui.formatDate(encuesta.fechaFin)}</td>
             <td>
                 <div class="actions">
-                    <button class="btn btn-sm btn-primary" onclick="editarEncuesta(${encuesta.id})">Editar</button>
-                    <button class="btn btn-sm btn-success" onclick="gestionarPreguntas(${encuesta.id})">Preguntas</button>
-                    ${encuesta.estado === 'BORRADOR' ? `<button class="btn btn-sm btn-success" onclick="activarEncuesta(${encuesta.id})">Activar</button>` : ''}
-                    ${encuesta.estado === 'ACTIVA' ? `<button class="btn btn-sm btn-warning" onclick="finalizarEncuesta(${encuesta.id})">Finalizar</button>` : ''}
-                    <button class="btn btn-sm btn-danger" onclick="eliminarEncuesta(${encuesta.id})">Eliminar</button>
+                    <button class="btn btn-sm btn-primary" onclick="editarEncuesta('${encuesta.id}')">Editar</button>
+                    <button class="btn btn-sm btn-success" onclick="gestionarPreguntas('${encuesta.id}')">Preguntas</button>
+                    ${encuesta.estado === 'BORRADOR' ? `<button class="btn btn-sm btn-success" onclick="activarEncuesta('${encuesta.id}')">Activar</button>` : ''}
+                    ${encuesta.estado === 'ACTIVA' ? `<button class="btn btn-sm btn-warning" onclick="finalizarEncuesta('${encuesta.id}')">Finalizar</button>` : ''}
+                    <button class="btn btn-sm btn-danger" onclick="eliminarEncuesta('${encuesta.id}')">Eliminar</button>
                 </div>
             </td>
         </tr>`;
@@ -128,7 +128,7 @@ function editarEncuesta(id) {
     document.getElementById('descripcion').value = encuesta.descripcion || '';
     document.getElementById('estado').value = encuesta.estado || 'BORRADOR';
     document.getElementById('empresaIdEncuesta').value = encuesta.empresaId || '';
-    
+
     if (encuesta.fechaInicio) {
         const fechaInicio = new Date(encuesta.fechaInicio);
         document.getElementById('fechaInicio').value = fechaInicio.toISOString().slice(0, 16);
@@ -137,7 +137,7 @@ function editarEncuesta(id) {
         const fechaFin = new Date(encuesta.fechaFin);
         document.getElementById('fechaFin').value = fechaFin.toISOString().slice(0, 16);
     }
-    
+
     ui.showModal('modalEncuesta');
 }
 
@@ -152,12 +152,12 @@ async function guardarEncuesta(event) {
     const encuestaId = document.getElementById('encuestaId').value;
     const fechaInicio = document.getElementById('fechaInicio').value;
     const fechaFin = document.getElementById('fechaFin').value;
-    
+
     const encuestaData = {
         titulo: document.getElementById('titulo').value,
         descripcion: document.getElementById('descripcion').value,
         estado: document.getElementById('estado').value,
-        empresaId: parseInt(document.getElementById('empresaIdEncuesta').value),
+        empresaId: document.getElementById('empresaIdEncuesta').value,
         fechaInicio: fechaInicio ? new Date(fechaInicio).toISOString() : null,
         fechaFin: fechaFin ? new Date(fechaFin).toISOString() : null
     };
@@ -170,7 +170,7 @@ async function guardarEncuesta(event) {
             await api.post('/encuestas', encuestaData);
             ui.showAlert('Encuesta creada exitosamente', 'success');
         }
-        
+
         cerrarModalEncuesta();
         cargarEncuestas();
     } catch (error) {
@@ -217,7 +217,7 @@ async function gestionarPreguntas(encuestaId) {
     encuestaActualId = encuestaId;
     const encuesta = encuestas.find(e => e.id === encuestaId);
     document.getElementById('encuestaTituloPreguntas').textContent = encuesta ? encuesta.titulo : '';
-    
+
     await cargarPreguntas(encuestaId);
     ui.showModal('modalPreguntas');
 }
@@ -257,7 +257,7 @@ function mostrarPreguntas() {
     html += '</tr></thead><tbody>';
 
     preguntas.forEach(pregunta => {
-        const obligatoriaBadge = pregunta.obligatoria 
+        const obligatoriaBadge = pregunta.obligatoria
             ? '<span class="badge badge-warning">Sí</span>'
             : '<span class="badge badge-info">No</span>';
 
@@ -367,7 +367,7 @@ async function editarPregunta(id) {
     document.getElementById('tipoPregunta').value = pregunta.tipo || 'OPCION_MULTIPLE';
     document.getElementById('obligatoriaPregunta').checked = pregunta.obligatoria || false;
     document.getElementById('ordenPregunta').value = pregunta.orden || '';
-    
+
     toggleOpciones();
     await cargarOpcionesPregunta();
     ui.showModal('modalPregunta');
@@ -384,13 +384,13 @@ async function guardarPregunta(event) {
 
     const preguntaId = document.getElementById('preguntaId').value;
     const encuestaId = document.getElementById('encuestaIdPregunta').value;
-    
+
     const preguntaData = {
         texto: document.getElementById('textoPregunta').value,
         tipo: document.getElementById('tipoPregunta').value,
         obligatoria: document.getElementById('obligatoriaPregunta').checked,
         orden: parseInt(document.getElementById('ordenPregunta').value) || null,
-        encuestaId: parseInt(encuestaId)
+        encuestaId: encuestaId
     };
 
     try {

@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
-    
+public interface UsuarioRepositorio extends JpaRepository<Usuario, java.util.UUID> {
+
     Optional<Usuario> findByEmail(String email);
-    
-    List<Usuario> findByEmpresaId(Long empresaId);
-    
-    List<Usuario> findByEmpresaIdAndActivoTrue(Long empresaId);
-    
+
+    List<Usuario> findByEmpresaId(java.util.UUID empresaId);
+
+    List<Usuario> findByEmpresaIdAndActivoTrue(java.util.UUID empresaId);
+
     boolean existsByEmail(String email);
 }
-
